@@ -1,7 +1,7 @@
 # Created by Jan - allows externals to easily download our env and requirements
 PYENV_ROOT := $(HOME)/.pyenv
 PYTHON_VERSION := 3.10.6  # Replace with the required Python version
-VENV_NAME := my_env  # Name of the virtual environment
+VENV_NAME := film_wizard  # Name of the virtual environment
 
 export PATH := $(PYENV_ROOT)/bin:$(PATH)
 
