@@ -1,0 +1,6 @@
+# Oliver's requirements
+notebook
+google-cloud-bigquery
+db-dtypes
+csv
+

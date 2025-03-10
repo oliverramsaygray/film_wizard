@@ -1,6 +1,5 @@
 # Ignores suggested for project #
 #################################
-
 raw_data/
 .env
 *Zone.Identifier
@@ -13,6 +12,7 @@ raw_data/
 ######################
 .DS_Store
 __MACOSX
+
 # Jupyter Notebook #
 .pytest_cache
 __pycache__
@@ -30,6 +30,7 @@ __pycache__
 *.zip
 mlruns
 *.sqlite
+
 # IDE #
 *.vscode
 
