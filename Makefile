@@ -1,21 +1,20 @@
-# Created by Jan - allows externals to easily download our env and requirements
 PYENV_ROOT := $(HOME)/.pyenv
 PYTHON_VERSION := 3.10.6  # Replace with the required Python version
 VENV_NAME := film_wizard  # Name of the virtual environment
 
 export PATH := $(PYENV_ROOT)/bin:$(PATH)
 
-.PHONY: install install-pyenv setup-venv activate clean
+.PHONY: install install-pyenv setup-venv activate clean install-requirements
 
-install: install-pyenv setup-venv ## Full environment setup
+install: install-pyenv setup-venv install-requirements ## Full environment setup
 
 install-pyenv:
 	@if ! command -v pyenv >/dev/null; then \
 		echo "Pyenv is not installed, installing..."; \
 		curl https://pyenv.run | bash; \
 		export PATH="$(PYENV_ROOT)/bin:$(PATH)"; \
-		eval "$$(pyenv init --path)"; \
-		eval "$$(pyenv virtualenv-init -)"; \
+		eval "$(shell pyenv init --path)"; \
+		eval "$(shell pyenv virtualenv-init -)"; \
 	fi
 
 setup-venv:
@@ -30,9 +29,11 @@ setup-venv:
 	echo "Setting local environment to $(VENV_NAME)..."
 	pyenv local $(VENV_NAME)
 	pip install --upgrade pip
+
+install-requirements:
+	@echo "Installing required packages from requirements.txt..."
 	@if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-	@echo "Jupyter installation (if needed)..."
-	pip install jupyter
+	@echo "Installation completed."
 
 activate:
 	@echo "Run the following command to activate the environment:"
