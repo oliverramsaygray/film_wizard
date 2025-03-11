@@ -1,6 +1,17 @@
+kagglehub[pandas-datasets]==0.3.10
+pandas==2.2.3
+google-cloud-bigquery
+colorama
+pathlib
+dotenv
+pandas-gbq
+jupyter==1.0.0
+jupyter-contrib-nbextensions==0.5.1
+jupyter_nbextensions_configurator==0.5.0
+jupyter-server==1.21.0
+jupyterlab==3.4.8
+jupyterlab-widgets==1.1.1
 # Oliver's requirements
 notebook
-google-cloud-bigquery
 db-dtypes
 csv
-
