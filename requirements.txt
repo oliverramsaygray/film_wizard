@@ -3,4 +3,6 @@ notebook
 google-cloud-bigquery
 db-dtypes
 csv
-
+tensorflow
+tf-keras
+transformers
