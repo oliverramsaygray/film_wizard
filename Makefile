@@ -41,3 +41,8 @@ activate:
 
 clean:
 	rm -rf $(PYENV_ROOT)/versions/$(VENV_NAME)
+
+	export $(shell grep -v '^#' .env | xargs)
+
+load-env:
+	python -m gcp_lib.params
