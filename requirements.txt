@@ -19,4 +19,6 @@ tensorflow
 tf-keras
 transformers
 csv
+numpy
+sklearn
 
