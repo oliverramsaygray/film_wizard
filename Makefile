@@ -46,3 +46,15 @@ clean:
 
 load-env:
 	python -m gcp_lib.params
+
+# 🚀 Train model in BigQuery ML
+train-model: load-env
+	@echo "🔍 Training recommendation model in BigQuery ML..."
+	python models/bigquery_collab_matrix/train_model.py
+	@echo "✅ Model training completed!"
+
+# 🌐 Launch API server (Flask)
+start-api: load-env
+	@echo "🚀 Starting API server..."
+	python api/recommend_api.py
+	@echo "✅ API server is running!"
