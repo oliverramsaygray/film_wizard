@@ -21,4 +21,5 @@ transformers
 csv
 numpy
 sklearn
-
+textstat
+nltk
