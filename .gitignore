@@ -3,6 +3,7 @@
 raw_data/
 .env
 *Zone.Identifier
+*.pyc
 
 # Following list is from #
 # taxifare package.      #
