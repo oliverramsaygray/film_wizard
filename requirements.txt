@@ -1,4 +1,3 @@
-transformers
 kagglehub[pandas-datasets]==0.3.10
 pandas==2.2.3
 google-cloud-bigquery
@@ -16,4 +15,8 @@ flask
 # Oliver's requirements
 notebook
 db-dtypes
+tensorflow
+tf-keras
+transformers
 csv
+
