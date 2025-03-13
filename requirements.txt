@@ -25,10 +25,11 @@ flask
 # Oliver's requirements
 notebook
 db-dtypes
+requests
+transformers
+scikit-learn
 tensorflow
 tf-keras
-transformers
 csv
 numpy
 sklearn
-
