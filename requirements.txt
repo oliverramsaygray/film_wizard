@@ -1,13 +1,12 @@
-#Adam requirements
+# Adam requirements
 scikit-learn==1.6.1
 google-cloud-bigquery-connection==1.18.1
 google-cloud-bigquery-storage==2.28.0
 tqdm==4.67.1
-pandas-stubs==2.2.2.240909
+pandas-stubs==1.5.3.230203
 sklearn-pandas==2.2.0
 numpy==1.26.4
 geopandas==1.0.1
-
 kagglehub[pandas-datasets]==0.3.10
 pandas==2.2.3
 google-cloud-bigquery
@@ -22,14 +21,13 @@ jupyter-server==1.21.0
 jupyterlab==3.4.8
 jupyterlab-widgets==1.1.1
 flask
+
 # Oliver's requirements
 notebook
 db-dtypes
 requests
 transformers
-scikit-learn
-tensorflow
+tensorflow>=2.12  # Použít novější TensorFlow
 tf-keras
-csv
-numpy
-sklearn
+protobuf>=3.20.2,<6.0.0dev  # Opravený protobuf pro Google Cloud BigQuery kompatibilitu
+gunicorn
