@@ -7,7 +7,6 @@ pandas-stubs==2.2.2.240909
 sklearn-pandas==2.2.0
 numpy==1.26.4
 geopandas==1.0.1
-
 kagglehub[pandas-datasets]==0.3.10
 pandas==2.2.3
 google-cloud-bigquery
@@ -28,7 +27,8 @@ db-dtypes
 tensorflow
 tf-keras
 transformers
-csv
 numpy
 sklearn
-
+google-cloud-storage
+google-cloud-bigquery
+db-dtypes
