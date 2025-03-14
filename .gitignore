@@ -2,6 +2,7 @@
 #################################
 raw_data/
 .env
+.env.example
 *Zone.Identifier
 *.pyc
 

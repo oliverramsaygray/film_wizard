@@ -21,14 +21,19 @@ jupyter-server==1.21.0
 jupyterlab==3.4.8
 jupyterlab-widgets==1.1.1
 flask
+
 # Oliver's requirements
 notebook
 db-dtypes
+requests
+transformers
+scikit-learn
 tensorflow
 tf-keras
-transformers
 numpy
 sklearn
 google-cloud-storage
 google-cloud-bigquery
 db-dtypes
+python-dotenv
+fuzzywuzzy

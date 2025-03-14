@@ -49,9 +49,12 @@ load-env:
 
 # 🚀 Train model in BigQuery ML
 train-model: load-env
-	@echo "🔍 Training recommendation model in BigQuery ML..."
-	python models/bigquery_collab_matrix/train_model.py
-	@echo "✅ Model training completed!"
+	@echo "🔍 Training recommendation log regression model in BigQuery ML..."
+	python models/bigquery_logistic_regression/train_model.py
+	@echo "✅ Model training log. regression completed!"
+	@echo "🔍 Training recommendation XBoost model in BigQuery ML..."
+	python models/bigquery_xboost/train_model.py
+	@echo "✅ Model training XBoost model completed!"
 
 # 🌐 Launch API server (Flask)
 start-api: load-env
