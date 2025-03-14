@@ -7,7 +7,6 @@ pandas-stubs==2.2.2.240909
 sklearn-pandas==2.2.0
 numpy==1.26.4
 geopandas==1.0.1
-
 kagglehub[pandas-datasets]==0.3.10
 pandas==2.2.3
 google-cloud-bigquery
@@ -23,7 +22,6 @@ jupyterlab==3.4.8
 jupyterlab-widgets==1.1.1
 flask
 
-
 # Oliver's requirements
 notebook
 db-dtypes
@@ -32,7 +30,10 @@ transformers
 scikit-learn
 tensorflow
 tf-keras
-csv
+numpy
 sklearn
+google-cloud-storage
+google-cloud-bigquery
+db-dtypes
 python-dotenv
 fuzzywuzzy
