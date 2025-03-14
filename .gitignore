@@ -1,6 +1,7 @@
 # Ignores suggested for project #
 #################################
 raw_data/
+models/
 .env
 .env.example
 *Zone.Identifier
