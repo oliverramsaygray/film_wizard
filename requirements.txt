@@ -21,4 +21,4 @@ transformers
 csv
 numpy
 sklearn
-
+google-cloud-storage
