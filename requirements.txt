@@ -38,3 +38,4 @@ db-dtypes
 python-dotenv
 fuzzywuzzy
 scikit-surprise
+lenskit
