@@ -1,10 +1,12 @@
 # Ignores suggested for project #
 #################################
 raw_data/
+models/
 .env
+.env.example
 *Zone.Identifier
 *.pyc
-
+tests/DeepSeek/
 # Following list is from #
 # taxifare package.      #
 ##########################
@@ -40,3 +42,5 @@ mlruns
 
 # Challengify - test challengification files
 *_challengify*
+.env.yaml
+credentials.json
