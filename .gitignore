@@ -42,3 +42,5 @@ mlruns
 
 # Challengify - test challengification files
 *_challengify*
+.env.yaml
+credentials.json
