@@ -37,7 +37,12 @@ python-dotenv
 fuzzywuzzy
 scikit-surprise
 lenskit
-tensorflow>=2.12  # Použít novější TensorFlow
+
+# Josh's requirements
+ollama
+python-Levenshtein
+
+tensorflow>=2.12
 tf-keras
-protobuf>=3.20.2,<6.0.0dev  # Opravený protobuf pro Google Cloud BigQuery kompatibilitu
+protobuf>=3.20.2,<6.0.0dev
 gunicorn

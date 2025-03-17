@@ -6,7 +6,7 @@ models/
 .env.example
 *Zone.Identifier
 *.pyc
-
+tests/DeepSeek/
 # Following list is from #
 # taxifare package.      #
 ##########################
