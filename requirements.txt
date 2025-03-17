@@ -39,3 +39,7 @@ python-dotenv
 fuzzywuzzy
 scikit-surprise
 lenskit
+
+# Josh's requirements
+ollama
+python-Levenshtein
