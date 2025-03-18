@@ -31,6 +31,7 @@ scikit-learn
 numpy
 sklearn
 google-cloud-storage
+
 google-cloud-bigquery
 db-dtypes
 python-dotenv
@@ -41,7 +42,6 @@ lenskit
 # Josh's requirements
 ollama
 python-Levenshtein
-
 tensorflow>=2.12
 tf-keras
 protobuf>=3.20.2,<6.0.0dev
