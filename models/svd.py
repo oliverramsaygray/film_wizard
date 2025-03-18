@@ -36,6 +36,30 @@ def fuzzy_match(df1: pd.DataFrame, col1: str, df2: pd.DataFrame, col2: str, thre
 
     return pd.DataFrame(matched_data, columns=['movieId', col1, 'matched_title', 'rating', 'fuzzy_score'])
 
+
+def clusters_filter(user_df, recom_df, clusters_df):
+    '''
+    Filters recommendations based on the clusters found in user_df.
+    Parameters:
+    user_df (DataFrame): Contains user movie preferences, including a Cluster column.
+    recom_df (DataFrame): Contains movie recommendations, without a Cluster column.
+    clusters_df (DataFrame): Contains movie IDs and their corresponding clusters.
+    Returns:
+    DataFrame: Filtered recommendations based on matching clusters.
+    '''
+    # Merge user_df with clusters_df to get the cluster info
+    user_df = user_df.merge(clusters_df, on='movieId', how='left')
+    unique_clusters = user_df['Cluster'].unique()
+    # Create a DataFrame of clusters and corresponding movies
+    user_df = user_df.dropna()
+    # Merge recom_df with clusters_df to get the ‘Cluster’ column
+    recom_df = recom_df.merge(clusters_df, on='movieId', how='left')
+    # Filter recommendations based on user clusters
+    filtered_recom_df = recom_df[recom_df['Cluster'].isin(unique_clusters)]
+    # Remove movies that are already in user_df
+    filtered_recom_df = filtered_recom_df[~filtered_recom_df['movieId'].isin(user_df['movieId'])]
+    return filtered_recom_df
+
 def svd_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for_testing: bool = True) -> pd.DataFrame:
     '''
     Uses the surprise package's built-in SVD model to make recommendations to a
@@ -171,9 +195,19 @@ def svd_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for_testing
 
     predictions_df = predictions_sorted_df.merge(glmovies_df[['movieId', 'title']], on='movieId', how='inner')
 
+
+    cluster_query = """
+        SELECT *
+        FROM `film-wizard-453315.clustered_movies.clusters_ids`
+    """
+    # Fetch data from BigQuery
+    cluster_ids_df = client.query(cluster_query).to_dataframe()
+
+    recommedations_df = clusters_filter(matches_df, predictions_df, cluster_ids_df)
+
     # top_n = get_top_n(predictions, n=3)
     print("###############################\n###############################\n###############################\n###############################\n")
-    return predictions_df.head(10)
+    return recommedations_df.head(10) # predictions_df.head(10)
 
 # Testing
 if __name__ == "__main__":
