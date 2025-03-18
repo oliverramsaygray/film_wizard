@@ -1,7 +1,7 @@
 # Ignores suggested for project #
 #################################
 raw_data/
-models/
+models/TheBlokeLlamaQuant
 .env
 .env.example
 *Zone.Identifier
