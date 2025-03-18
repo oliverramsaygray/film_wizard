@@ -1,3 +1,12 @@
+# Adam requirements
+scikit-learn==1.6.1
+google-cloud-bigquery-connection==1.18.1
+google-cloud-bigquery-storage==2.28.0
+tqdm==4.67.1
+pandas-stubs==1.5.3.230203
+sklearn-pandas==2.2.0
+numpy==1.26.4
+geopandas==1.0.1
 kagglehub[pandas-datasets]==0.3.10
 pandas==2.2.3
 google-cloud-bigquery
@@ -12,13 +21,29 @@ jupyter-server==1.21.0
 jupyterlab==3.4.8
 jupyterlab-widgets==1.1.1
 flask
+
 # Oliver's requirements
 notebook
 db-dtypes
-tensorflow
-tf-keras
+requests
 transformers
-csv
+scikit-learn
 numpy
 sklearn
 google-cloud-storage
+
+google-cloud-bigquery
+db-dtypes
+python-dotenv
+fuzzywuzzy
+scikit-surprise
+lenskit
+
+# Josh's requirements
+ollama
+python-Levenshtein
+tensorflow>=2.12
+tf-keras
+protobuf>=3.20.2,<6.0.0dev
+gunicorn
+rapidfuzz
