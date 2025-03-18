@@ -49,7 +49,7 @@ def get_top_n(predictions: list, n: int) -> dict:
 
     return top_n
 
-def svd_surprise(user_ratings_df: pd.DataFrame) -> None:
+def svd_predict(user_ratings_df: pd.DataFrame) -> None:
     '''
     Uses the surprise package's built-in SVD model to make recommendations to a
     user.
