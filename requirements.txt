@@ -36,6 +36,7 @@ google-cloud-bigquery
 db-dtypes
 python-dotenv
 fuzzywuzzy
+rapidfuzz
 scikit-surprise
 lenskit
 
