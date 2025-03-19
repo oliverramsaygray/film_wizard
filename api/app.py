@@ -3,6 +3,7 @@ from google.cloud import bigquery
 from flask import Flask, request, jsonify
 from gcp_lib.params import GCP_PROJECT, BQ_DATASET, TABLE_DATA_TOMATO_REVIEWS_RAW
 import pandas as pd
+from models.svd import svd_predict, svd_cluster_predict
 
 app = Flask(__name__)
 client = bigquery.Client()
@@ -19,19 +20,23 @@ def make_svd_predictions(df):
     # 1.) movies = SVD_model.predict(df)
     # 2.) remove mockup array "movies = [" below, cause is calculated above in SVD_model.predi..
 
-    movies = [
-        {"movie_id": 1, "title": "Inception", "genre": "Sci-Fi", "rating": 8.8},
-        {"movie_id": 2, "title": "The Dark Knight", "genre": "Action", "rating": 9.0},
-        {"movie_id": 3, "title": "Interstellar", "genre": "Sci-Fi", "rating": 8.6},
-        {"movie_id": 4, "title": "Pulp Fiction", "genre": "Crime", "rating": 8.9},
-        {"movie_id": 5, "title": "Fight Club", "genre": "Drama", "rating": 8.8},
-        {"movie_id": 6, "title": "Forrest Gump", "genre": "Drama", "rating": 8.8},
-        {"movie_id": 7, "title": "The Matrix", "genre": "Sci-Fi", "rating": 8.7},
-        {"movie_id": 8, "title": "The Lord of the Rings", "genre": "Fantasy", "rating": 8.9},
-        {"movie_id": 9, "title": "The Godfather", "genre": "Crime", "rating": 9.2},
-        {"movie_id": 10, "title": "Shawshank Redemption", "genre": "Drama", "rating": 9.3}
-    ]
-    return pd.DataFrame(movies)
+    # movies = svd_predict(df)
+    movies = svd_cluster_predict(df)
+
+    # movies = [
+    #     {"movie_id": 1, "title": "Inception", "genre": "Sci-Fi", "rating": 8.8},
+    #     {"movie_id": 2, "title": "The Dark Knight", "genre": "Action", "rating": 9.0},
+    #     {"movie_id": 3, "title": "Interstellar", "genre": "Sci-Fi", "rating": 8.6},
+    #     {"movie_id": 4, "title": "Pulp Fiction", "genre": "Crime", "rating": 8.9},
+    #     {"movie_id": 5, "title": "Fight Club", "genre": "Drama", "rating": 8.8},
+    #     {"movie_id": 6, "title": "Forrest Gump", "genre": "Drama", "rating": 8.8},
+    #     {"movie_id": 7, "title": "The Matrix", "genre": "Sci-Fi", "rating": 8.7},
+    #     {"movie_id": 8, "title": "The Lord of the Rings", "genre": "Fantasy", "rating": 8.9},
+    #     {"movie_id": 9, "title": "The Godfather", "genre": "Crime", "rating": 9.2},
+    #     {"movie_id": 10, "title": "Shawshank Redemption", "genre": "Drama", "rating": 9.3}
+    # ]
+
+    return movies # pd.DataFrame(movies)
 
 @app.route('/movie_predictions', methods=['POST'])
 def movie_predictions():
