@@ -346,7 +346,9 @@ def svd_cluster_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for
 
     # top_n = get_top_n(predictions, n=3)
     print("###############################\n###############################\n###############################\n###############################\n")
-    return recommedations_df[['imdbId','estimated rating','title','genres','runtime']].head(10) # predictions_df.head(10)
+    output = recommedations_df[['imdbId','estimated rating','title','genres','runtime']].head(10)
+    output.columns = ['IMDB ID','Estimated Rating', 'Title', 'Genres', 'Duration (min)']
+    return output # predictions_df.head(10)
 
 # Testing
 if __name__ == "__main__":
