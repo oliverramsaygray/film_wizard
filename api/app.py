@@ -16,25 +16,7 @@ def make_svd_predictions(df):
     if df is not None and not df.empty:
         return df.sample(n=min(10, len(df)))
 
-    # TODO:
-    # 1.) movies = SVD_model.predict(df)
-    # 2.) remove mockup array "movies = [" below, cause is calculated above in SVD_model.predi..
-
-    # movies = svd_predict(df)
     movies = svd_cluster_predict(df)
-
-    # movies = [
-    #     {"movie_id": 1, "title": "Inception", "genre": "Sci-Fi", "rating": 8.8},
-    #     {"movie_id": 2, "title": "The Dark Knight", "genre": "Action", "rating": 9.0},
-    #     {"movie_id": 3, "title": "Interstellar", "genre": "Sci-Fi", "rating": 8.6},
-    #     {"movie_id": 4, "title": "Pulp Fiction", "genre": "Crime", "rating": 8.9},
-    #     {"movie_id": 5, "title": "Fight Club", "genre": "Drama", "rating": 8.8},
-    #     {"movie_id": 6, "title": "Forrest Gump", "genre": "Drama", "rating": 8.8},
-    #     {"movie_id": 7, "title": "The Matrix", "genre": "Sci-Fi", "rating": 8.7},
-    #     {"movie_id": 8, "title": "The Lord of the Rings", "genre": "Fantasy", "rating": 8.9},
-    #     {"movie_id": 9, "title": "The Godfather", "genre": "Crime", "rating": 9.2},
-    #     {"movie_id": 10, "title": "Shawshank Redemption", "genre": "Drama", "rating": 9.3}
-    # ]
 
     return movies # pd.DataFrame(movies)
 

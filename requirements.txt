@@ -29,7 +29,7 @@ requests
 transformers
 scikit-learn
 numpy
-sklearn
+scikit-learn
 google-cloud-storage
 
 google-cloud-bigquery
