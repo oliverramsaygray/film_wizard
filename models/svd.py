@@ -334,7 +334,6 @@ def svd_cluster_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for
 
     predictions_df = predictions_sorted_df.merge(glmovies_df[['movieId', 'title']], on='movieId', how='inner')
 
-
     cluster_query = """
         SELECT *
         FROM `film-wizard-453315.clustered_movies.clusters_ids_metadata`
@@ -344,10 +343,34 @@ def svd_cluster_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for
 
     recommedations_df = clusters_filter(matches_df, predictions_df, cluster_ids_df)
 
+     # Fetch `poster_path` using `tmdbId`
+    tmdb_ids = recommedations_df["tmdbId"].dropna().astype(str).tolist()
+    movie_details_query = f"""
+        SELECT tmdbId, poster_path
+        FROM `film-wizard-453315.tmdb_metadata.movie_details`
+        WHERE tmdbId IN ({", ".join(tmdb_ids)})
+    """
+    print("🔍 Fetching movie details from BQ using tmdbId")
+    movie_details_df = client.query(movie_details_query).to_dataframe()
+
+    print("✅ movie_details_df columns:", movie_details_df.columns)
+    print("✅ Sample movie_details_df:\n", movie_details_df.head())
+
+    if "tmdbId" not in movie_details_df.columns:
+        print("⚠️ `tmdbId` column not found in movie_details_df, checking alternative names...")
+        movie_details_df.rename(columns={"tmdbid": "tmdbId"}, inplace=True)
+
+    # Merge `tmdbId` with recommendations
+    recommedations_df = recommedations_df.merge(movie_details_df, on="tmdbId", how="left")
+
+    # Construct full poster URL
+    poster_base_url = "https://image.tmdb.org/t/p/w200/"
+    recommedations_df["poster_url"] = poster_base_url + recommedations_df["poster_path"].fillna("")
+
     # top_n = get_top_n(predictions, n=3)
     print("###############################\n###############################\n###############################\n###############################\n")
-    output = recommedations_df[['imdbId','estimated rating','title','genres','runtime']].head(10)
-    output.columns = ['IMDB ID','Estimated Rating', 'Title', 'Genres', 'Duration (min)']
+    output = recommedations_df[['imdbId','estimated rating','title','genres','runtime','poster_url']].head(10)
+    output.columns = ['IMDB ID','Estimated Rating', 'Title', 'Genres', 'Duration (min)','poster_url']
     return output # predictions_df.head(10)
 
 # Testing
