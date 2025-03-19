@@ -199,7 +199,7 @@ def svd_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for_testing
     print("###############################\n###############################\n###############################\n###############################\n")
     return predictions_df.head(10)
 
-def svd_cluster_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for_testing: bool = True) -> pd.DataFrame:
+def svd_cluster_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for_testing: bool = False) -> pd.DataFrame:
     '''
     Uses the surprise package's built-in SVD model to make recommendations to a
     user.

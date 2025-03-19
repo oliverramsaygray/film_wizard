@@ -13,8 +13,6 @@ def make_svd_predictions(df):
     """
     Generates a mockup list of 10 random movies based on input DataFrame.
     """
-    if df is not None and not df.empty:
-        return df.sample(n=min(10, len(df)))
 
     movies = svd_cluster_predict(df)
 
