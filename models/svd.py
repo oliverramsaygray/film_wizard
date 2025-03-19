@@ -105,7 +105,146 @@ def svd_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for_testing
 
     # Loading the dataset of ratings from BQ can take ages, so only take up to BQ_RATINGS_LIMIT
     # Need to decide whether to take randomly or how to deal with bottleneck.
-    BQ_RATINGS_LIMIT = 5_000_000
+    BQ_RATINGS_LIMIT = 1_000_000
+
+    client = bigquery.Client(project="film-wizard-453315")
+
+    if use_local_ratings_for_testing:
+        print("Loading glratings locally")
+        glratings_local_time_start = t.time()
+        glratings_df = pd.read_csv("../raw_data/movielens_ratings.csv") # Named it wrong locally, it's called grouplens table in BQ
+        glratings_local_time_end = t.time()
+        print(f'Loading glratings locally took {round(glratings_local_time_end-glratings_local_time_start,2)} seconds')
+        glratings_df = glratings_df.iloc[:int(BQ_RATINGS_LIMIT)]
+    else:
+        glratings_query = f"""
+            SELECT userId, movieId, rating
+            FROM `film-wizard-453315.Grouplens.raw_grouplens_ratings`
+            ORDER BY RAND()
+            LIMIT {int(BQ_RATINGS_LIMIT)}
+        """
+        print("Loading glratings from BQ")
+        glratings_BQ_time_start = t.time()
+        glratings_df = client.query(glratings_query).to_dataframe()
+        glratings_BQ_time_end = t.time()
+        print(f'Loading mlratings took {round(glratings_BQ_time_end-glratings_BQ_time_start,2)} seconds')
+
+    glmovies_query = """
+        SELECT movieId, title
+        FROM `film-wizard-453315.Grouplens.grouplens_movies`
+    """
+
+    print("Loading glmovies from BQ")
+    glmovies_BQ_time_start = t.time()
+    glmovies_df = client.query(glmovies_query).to_dataframe()
+    glmovies_BQ_time_end = t.time()
+    print(f'Loading glmovies from BQ took {round(glmovies_BQ_time_end-glmovies_BQ_time_start,2)} seconds')
+
+    print("Starting fuzzy match")
+    fuzz_time_start = t.time()
+    matches_df = fuzzy_match(new_user_ratings_df, 'title', glmovies_df, 'title') #  is users_df in Tigran's notebook
+    fuzz_time_end = t.time()
+    print(f'Fuzzy matching took {round(fuzz_time_end-fuzz_time_start,2)} seconds')
+
+    matches_df.dropna(inplace=True) # Drop where fuzzyscore is less than 80
+
+    new_user_id = glratings_df['userId'].max() + 1 # Ensure ID assigned to new user is unique
+    matches_df['userId'] = new_user_id
+
+    glratings_df = pd.concat([glratings_df, matches_df[['userId', 'movieId', 'rating']]], ignore_index=True)
+
+    ############ SVD ############
+    #############################
+
+    # Build dataset with surprise tools
+    reader = Reader(rating_scale=(0.5, 5))
+    print("Building surprise dataset")
+    sdata_time_start = t.time()
+    data = Dataset.load_from_df(glratings_df, reader)
+    trainset = data.build_full_trainset()
+    sdata_time_end = t.time()
+    print(f'Building surprise dataset took {round(sdata_time_end-sdata_time_start,2)} seconds')
+
+    model = SVD()
+    print("Fitting SVD")
+    svd_time_start = t.time()
+    model.fit(trainset)
+    svd_time_end = t.time()
+    print(f'Fitting SVD took {round(svd_time_end-svd_time_start,2)} seconds')
+
+    ####### Postprocessing #######
+    ##############################
+
+    all_movie_ids = glmovies_df['movieId'].unique()
+
+    predictions_list = []
+
+    # Loop through all movie IDs and make predictions
+    print("Getting predictions")
+    pred_time_start = t.time()
+    for movieId in all_movie_ids:
+        prediction = model.predict(new_user_id, movieId)
+        predictions_list.append({'movieId': movieId, 'estimated rating': prediction.est}) # Rename 'prediction' to 'estimated rating'
+    pred_time_end = t.time()
+    print(f'Getting predictions took {round(pred_time_end-pred_time_start,2)} seconds')
+
+    # Build a dataframe from results and clean for output
+    predictions_df = pd.DataFrame(predictions_list)
+
+    predictions_sorted_df = predictions_df.sort_values(by='estimated rating', ascending=False)
+
+    predictions_df = predictions_sorted_df.merge(glmovies_df[['movieId', 'title']], on='movieId', how='inner')
+
+    # top_n = get_top_n(predictions, n=3)
+    print("###############################\n###############################\n###############################\n###############################\n")
+    return predictions_df.head(10)
+
+def svd_cluster_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for_testing: bool = True) -> pd.DataFrame:
+    '''
+    Uses the surprise package's built-in SVD model to make recommendations to a
+    user.
+
+    Input:
+        Takes a dataframe with unordered movie ratings from a user with at least
+        the following columns;
+
+        name, year, rating
+        E.g.
+
+        TO DO - Make example
+
+    Output:
+        Returns a list of recommended movies (that have not been seen by the
+        user) ordered by the ratings predicted by the SVD model.
+        E.g.
+
+        title         | rating
+        Heat          | 5.0
+        Notting Hill  | 3.0
+        Grown Ups     | 3.5
+        etc
+    '''
+
+    ####### Preprocessing #######
+    #############################
+
+    # If users have rated out of 10 instead of 5, divide by 2. Does not catch
+    # critical reviewers but MANAGEMENT has assured us we can assume there are
+    # few or even no such customers.
+    if ( new_user_ratings_df['rating'] >= 6 ).any():
+        new_user_ratings_df['rating'] = new_user_ratings_df['rating'] / 2.0
+
+    new_user_ratings_df = new_user_ratings_df[new_user_ratings_df['year'] <= 2022] # Grouplens has data up to 2022
+    new_user_ratings_df = new_user_ratings_df[['title','rating']] #(columns=['date', 'year', 'letterboxduri'], inplace=True)
+    new_user_ratings_df.dropna(inplace=True)
+
+    # Loading the data from local cache and downsampling for testing.
+    # Loading the local data breaks the fuzzy matching function
+    # because it is expecting a dataframe with a title column.
+
+    # Loading the dataset of ratings from BQ can take ages, so only take up to BQ_RATINGS_LIMIT
+    # Need to decide whether to take randomly or how to deal with bottleneck.
+    BQ_RATINGS_LIMIT = 1_000_000
 
     client = bigquery.Client(project="film-wizard-453315")
 
@@ -207,11 +346,11 @@ def svd_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for_testing
 
     # top_n = get_top_n(predictions, n=3)
     print("###############################\n###############################\n###############################\n###############################\n")
-    return recommedations_df.head(10) # predictions_df.head(10)
+    return recommedations_df[['movieId','estimated rating','title']].head(10) # predictions_df.head(10)
 
 # Testing
 if __name__ == "__main__":
-    olivia_df = pd.read_csv("../raw_data/movie_night_test.csv")
+    olivia_df = pd.read_csv("../raw_data/olivia_movies.csv")
     # frontend_test_csv = pd.read_csv("../raw_data/sample_ratings_from_frontend.csv")
 
     print(olivia_df.keys())
