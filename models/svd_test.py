@@ -323,7 +323,7 @@ def svd_cluster_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for
     pred_time_start = t.time()
     for movieId in all_movie_ids:
         prediction = model.predict(new_user_id, movieId)
-        predictions_list.append({'movieId': movieId, 'estimated rating': round(prediction.est,1)}) # Rename 'prediction' to 'estimated rating'
+        predictions_list.append({'movieId': movieId, 'estimated rating': prediction.est}) # Rename 'prediction' to 'estimated rating'
     pred_time_end = t.time()
     print(f'Getting predictions took {round(pred_time_end-pred_time_start,2)} seconds')
 
@@ -337,7 +337,7 @@ def svd_cluster_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for
 
     cluster_query = """
         SELECT *
-        FROM `film-wizard-453315.clustered_movies.clusters_ids_metadata`
+        FROM `film-wizard-453315.clustered_movies.clusters_ids`
     """
     # Fetch data from BigQuery
     cluster_ids_df = client.query(cluster_query).to_dataframe()
@@ -346,7 +346,7 @@ def svd_cluster_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for
 
     # top_n = get_top_n(predictions, n=3)
     print("###############################\n###############################\n###############################\n###############################\n")
-    return recommedations_df[['imdbId','estimated rating','title','genres','runtime']].head(10) # predictions_df.head(10)
+    return recommedations_df[['movieId','estimated rating','title']].head(10) # predictions_df.head(10)
 
 # Testing
 if __name__ == "__main__":
@@ -355,5 +355,4 @@ if __name__ == "__main__":
 
     print(olivia_df.keys())
     print("-----------------------")
-    print(svd_cluster_predict(new_user_ratings_df = olivia_df, use_local_ratings_for_testing = False))
-    #print(svd_predict(new_user_ratings_df = olivia_df, use_local_ratings_for_testing = False))
+    print(svd_predict(new_user_ratings_df = olivia_df, use_local_ratings_for_testing = False))
