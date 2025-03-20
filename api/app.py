@@ -3,7 +3,7 @@ from google.cloud import bigquery
 from flask import Flask, request, jsonify
 from gcp_lib.params import GCP_PROJECT, BQ_DATASET, TABLE_DATA_TOMATO_REVIEWS_RAW
 import pandas as pd
-from models.svd import svd_predict, svd_cluster_predict
+from models.svd import svd_predict, svd_cluster_predict, cluster_descriptor
 
 app = Flask(__name__)
 client = bigquery.Client()
@@ -193,6 +193,17 @@ def recommend_xgboost():
 @app.route('/', methods=['GET'])
 def home():
     return jsonify({'message': 'Recommendation engine is running'}), 200
+
+@app.route('/cluster_info', methods=['POST'])
+def cluster_info():
+    try:
+        data = request.get_json()
+        df = pd.DataFrame(data).dropna()
+        output = cluster_descriptor(df)
+        return jsonify({'message': 'Cluster info generated', 'info': output.to_dict(orient='records')}), 200
+
+    except Exception as e:
+        return jsonify({'error': f'Error generating cluster info: {str(e)}'}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))

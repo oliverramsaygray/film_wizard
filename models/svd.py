@@ -346,9 +346,35 @@ def svd_cluster_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for
 
     # top_n = get_top_n(predictions, n=3)
     print("###############################\n###############################\n###############################\n###############################\n")
-    output = recommedations_df[['imdbId','estimated rating','title','genres','runtime']].head(10)
-    output.columns = ['IMDB ID','Estimated Rating', 'Title', 'Genres', 'Duration (min)']
+    output = recommedations_df[['imdbId','estimated rating','title','genres','runtime','Cluster']].head(100)
+    output.columns = ['IMDB ID','Estimated Rating', 'Title', 'Genres', 'Duration (min)','Cluster']
+    
     return output # predictions_df.head(10)
+
+def cluster_descriptor(recom_df):
+    """
+    Filters cluster_dict based on the unique clusters present in recom_df.
+
+    Parameters:
+    recom_df (DataFrame): DataFrame containing movie recommendations with a 'Cluster' column.
+    cluster_dict (DataFrame): DataFrame containing cluster descriptions.
+
+    Returns:
+    DataFrame: Filtered cluster_dict with only the relevant clusters.
+    """
+    client = bigquery.Client(project="film-wizard-453315")
+    
+    # Fetch data from BigQuery
+    cluster_dict_query = """ SELECT * FROM `film-wizard-453315.clustered_movies.cluster_dict` """
+    cluster_dict = client.query(cluster_dict_query).to_dataframe()
+
+    # Get unique cluster values from recom_df
+    unique_clusters = recom_df['Cluster'].unique()
+
+    # Filter cluster_dict where 'Cluster' is in the unique_clusters list
+    filtered_cluster_dict = cluster_dict[cluster_dict['Cluster'].isin(unique_clusters)].reset_index(drop = True)
+
+    return filtered_cluster_dict
 
 # Testing
 if __name__ == "__main__":
