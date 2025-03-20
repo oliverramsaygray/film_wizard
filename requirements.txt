@@ -29,13 +29,14 @@ requests
 transformers
 scikit-learn
 numpy
-sklearn
+scikit-learn
 google-cloud-storage
 
 google-cloud-bigquery
 db-dtypes
 python-dotenv
 fuzzywuzzy
+rapidfuzz
 scikit-surprise
 lenskit
 
