@@ -39,6 +39,7 @@ fuzzywuzzy
 rapidfuzz
 scikit-surprise
 lenskit
+tqdm
 
 # Josh's requirements
 ollama
