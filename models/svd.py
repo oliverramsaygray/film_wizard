@@ -377,26 +377,32 @@ def svd_cluster_predict(new_user_ratings_df: pd.DataFrame, use_local_ratings_for
 
 def cluster_descriptor(recom_df):
     """
-    Filters cluster_dict based on the unique clusters present in recom_df.
+    Filters cluster_dict based on the unique clusters present in recom_df and ranks them by count.
 
     Parameters:
     recom_df (DataFrame): DataFrame containing movie recommendations with a 'Cluster' column.
-    cluster_dict (DataFrame): DataFrame containing cluster descriptions.
 
     Returns:
-    DataFrame: Filtered cluster_dict with only the relevant clusters.
+    DataFrame: Filtered cluster_dict with an additional ranking based on cluster frequency.
     """
     client = bigquery.Client(project="film-wizard-453315")
     
     # Fetch data from BigQuery
-    cluster_dict_query = """ SELECT * FROM `film-wizard-453315.clustered_movies.cluster_dict` """
+    cluster_dict_query = """SELECT * FROM `film-wizard-453315.clustered_movies.cluster_dict`"""
     cluster_dict = client.query(cluster_dict_query).to_dataframe()
 
-    # Get unique cluster values from recom_df
-    unique_clusters = recom_df['Cluster'].unique()
+    # Count occurrences of each cluster in recom_df
+    cluster_counts = recom_df['Cluster'].value_counts().reset_index()
+    cluster_counts.columns = ['Cluster', 'Count']
 
-    # Filter cluster_dict where 'Cluster' is in the unique_clusters list
-    filtered_cluster_dict = cluster_dict[cluster_dict['Cluster'].isin(unique_clusters)].reset_index(drop = True)
+    # Merge the cluster count with cluster_dict
+    filtered_cluster_dict = cluster_dict.merge(cluster_counts, on='Cluster', how='inner')
+
+    # Rank clusters based on the count (higher count = higher rank)
+    filtered_cluster_dict['Rank'] = filtered_cluster_dict['Count'].rank(method='dense', ascending=False)
+
+    # Sort by rank for better readability
+    filtered_cluster_dict = filtered_cluster_dict.sort_values(by='Rank')
 
     return filtered_cluster_dict
 
